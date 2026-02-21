@@ -1,13 +1,15 @@
 # 📦 AI-Powered Stock Manager Pro (v2.0)
 **Интеллектуальная Fullstack-система управления складской логистикой**
 
-[![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white)](https://www.python.org)
-[![Django](https://img.shields.io)](https://www.djangoproject.com)
-[![Vue.js](https://img.shields.io)](https://vuejs.org)
-[![Vercel](https://img.shields.io)](https://vercel.com)
-[![PythonAnywhere](https://img.shields.io)](https://www.pythonanywhere.com)
 
----
+
+[![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white)](https://www.python.org)
+[![Django](https://img.shields.io/badge/Django-092E20?style=flat&logo=django&logoColor=white)](https://www.djangoproject.com)
+[![Vue](https://img.shields.io/badge/Vite-646CFF?style=flat&logo=Vite&logoColor=white)](https://vuejs.org)
+[![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://vercel.com)
+[![PythonAnywhere](https://img.shields.io/badge/pythonanywhere-%232F9FD7.svg?style=for-the-badge&logo=pythonanywhere&logoColor=white)](https://www.pythonanywhere.com)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org)
+
 
 ## 🚀 Обзор системы
 **AI-Powered Stock Manager** — это ERP-система корпоративного уровня для автоматизации складского учета. Проект сочетает строгую архитектуру **Django REST Framework** и динамичный интерфейс **Vue 3**, интегрируя **Google Gemini AI** для прогнозной аналитики. [1]
