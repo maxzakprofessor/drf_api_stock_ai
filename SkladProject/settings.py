@@ -121,16 +121,24 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer', 'Token'), 
 }
 
-# 1. Выключаем полный доступ
+# 1. РАЗРЕШАЕМ ДОМЕН СЕРВЕРА (чтобы не было ошибки DisallowedHost)
+ALLOWED_HOSTS = [
+    'mzakiryanovgmailcom.pythonanywhere.com', 
+    'localhost', 
+    '127.0.0.1'
+]
+
+# 2. ВКЛЮЧАЕМ ЗАЩИТУ CORS (разрешаем только твой Vue)
 CORS_ALLOW_ALL_ORIGINS = False
 
-# 2. Разрешаем только твоему Vue-приложению
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",           # Твой локальный Vue (Vite) во время разработки
-    "https://your-vue-app.netlify.app", # Адрес, где будет лежать твой фронтенд в сети
-    "https://your-domain.com",         # Твой основной домен (если есть)
+    "http://localhost:5173",          # Твой локальный Vue (Vite)
+    "http://127.0.0.1:5173",
+    # "https://your-vue-app.netlify.app", # Сюда добавишь адрес после деплоя Vue
 ]
+
+# 3. ДОВЕРЕННЫЕ ИСТОЧНИКИ ДЛЯ CSRF
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
-    "https://your-vue-app.netlify.app",
+    "http://127.0.0.1:5173",
 ]
