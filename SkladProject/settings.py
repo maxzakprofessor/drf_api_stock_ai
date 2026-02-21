@@ -134,12 +134,12 @@ CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",          # Твой локальный Vue (Vite)
     "http://127.0.0.1:5173",
-    "https://vue-api-stock.vercel.app/", # Сюда добавишь адрес после деплоя Vue
+    "https://vue-api-stock.vercel.app", # Сюда добавишь адрес после деплоя Vue
 ]
 
 # 3. ДОВЕРЕННЫЕ ИСТОЧНИКИ ДЛЯ CSRF
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "https://vue-api-stock.vercel.app/",
+    "https://vue-api-stock.vercel.app",
 ]
