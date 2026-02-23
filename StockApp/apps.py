@@ -13,3 +13,10 @@ class StockappConfig(AppConfig):
     
     # Понятное название для админ-панели (опционально)
     verbose_name = 'Учёт склада и товаров'
+
+ 
+    # --- ДОБАВЛЯЕМ ЭТО ---
+    def ready(self):
+        # Импортируем файл сигналов при запуске сервера
+        import StockApp.signals 
+

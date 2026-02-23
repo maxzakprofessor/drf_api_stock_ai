@@ -43,7 +43,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
 ]
+
+
+
 
 ROOT_URLCONF = 'SkladProject.urls'
 
@@ -94,9 +98,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # НАСТРОЙКИ ДЛЯ СВЯЗИ С VUE И АВТОРИЗАЦИИ (JWT)
 # ==============================================================================
 
-# Разрешаем запросы со всех адресов (для разработки)
-CORS_ALLOW_ALL_ORIGINS = True 
-
 # Автоматически добавлять слеш в конце URL (важно для Django)
 APPEND_SLASH = True
 
@@ -105,12 +106,11 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
-    'DEFAULT_PERMISSION_CLASSES': [
-        # ВАЖНО: Эта настройка закрывает ВСЕ эндпоинты. 
-        # Доступ будет только у авторизованных пользователей с токеном.
-        'rest_framework.permissions.IsAuthenticated', 
-    ],
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
 }
+
 
 # Настройки времени жизни токенов SimpleJWT
 SIMPLE_JWT = {
@@ -129,7 +129,7 @@ ALLOWED_HOSTS = [
 ]
 
 # 2. ВКЛЮЧАЕМ ЗАЩИТУ CORS (разрешаем только твой Vue)
-CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOW_ALL_ORIGINS = True # Временно разрешаем все, потом сузим до конкретного адреса Vue
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",          # Твой локальный Vue (Vite)
@@ -142,4 +142,17 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
     "https://vue-api-stock.vercel.app",
+]
+
+# settings.py
+MONGO_URI = "mongodb://localhost:27017/"
+MONGO_DB_NAME = "sklad_audit_db"
+
+CORS_ALLOW_HEADERS = [
+    "accept",
+    "authorization", # ОБЯЗАТЕЛЬНО!
+    "content-type",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
 ]

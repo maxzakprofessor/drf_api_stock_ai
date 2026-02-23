@@ -21,6 +21,8 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
 
 from django.utils import timezone # Не забудьте импорт в начале файла
+from rest_framework import viewsets, permissions # Добавь импорт permissions
+from rest_framework_simplejwt.authentication import JWTAuthentication # И этот тоже
 
 
 # Импорт ваших моделей и сериализаторов
@@ -34,9 +36,27 @@ from .serializers import (
 # 1. АВТОРИЗАЦИЯ И УПРАВЛЕНИЕ ПАРОЛЯМИ
 # =============================================================================
 
+from .session_context import identity # Импортируем наш Singleton для хранения имени юзера
+
 class MyTokenObtainPairView(TokenObtainPairView):
-    """Вход в систему: возвращает JWT токен + username + флаг смены пароля"""
-    serializer_class = MyTokenObtainPairSerializer
+    def post(self, request, *args, **kwargs):
+        # 1. Получаем стандартный ответ (токены)
+        response = super().post(request, *args, **kwargs)
+        
+        if response.status_code == 200:
+            # 2. Берем имя из запроса (который прислал Vue)
+            user_name = request.data.get('username', 'admin')
+            
+            # 3. Фиксируем для MongoDB (Singleton)
+            from .session_context import identity
+            identity.set_user(user_name)
+            print(f"🔐 [SINGLETON] Личность зафиксирована: {user_name}")
+
+            # 4. ВАЖНО: Отдаем имя обратно во Vue, чтобы не было undefined!
+            response.data['username'] = user_name
+            
+        return response
+
 
 
 
@@ -150,20 +170,49 @@ class UserAdminView(APIView):
 # =============================================================================
 
 class GoodViewSet(viewsets.ModelViewSet):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
     queryset = Goods.objects.all()
     serializer_class = GoodSerializer
 
 class StockViewSet(viewsets.ModelViewSet):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
     queryset = Stocks.objects.all()
     serializer_class = StockSerializer
 
 class GoodIncomeViewSet(viewsets.ModelViewSet):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
     queryset = Goodincomes.objects.select_related('stock', 'good').all()
     serializer_class = GoodcomineSerializer
+  
+
 
 class GoodMoveViewSet(viewsets.ModelViewSet):
+    # ПРИНУДИТЕЛЬНО: Только JWT и только для авторизованных
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
     queryset = Goodmoves.objects.select_related('stockFrom', 'stockTo', 'good').all()
     serializer_class = GoodmoveSerializer
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # =============================================================================
