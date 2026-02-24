@@ -129,7 +129,7 @@ ALLOWED_HOSTS = [
 ]
 
 # 2. ВКЛЮЧАЕМ ЗАЩИТУ CORS (Cross-Origin Resource Sharing)
-CORS_ALLOW_ALL_ORIGINS = True # блокируем все, кроме разрешенных
+CORS_ALLOW_ALL_ORIGINS = False # блокируем все, кроме разрешенных
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",          # локальный Vue (Vite)
