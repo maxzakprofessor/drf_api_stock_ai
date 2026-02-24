@@ -23,6 +23,7 @@ from reportlab.lib import colors
 from django.utils import timezone # Не забудьте импорт в начале файла
 from rest_framework import viewsets, permissions # Добавь импорт permissions
 from rest_framework_simplejwt.authentication import JWTAuthentication # И этот тоже
+from .serializers import MyTokenObtainPairSerializer # Импортируйте ваш кастомный сериализатор
 
 
 # Импорт ваших моделей и сериализаторов
@@ -38,22 +39,24 @@ from .serializers import (
 
 from .session_context import identity # Импортируем наш Singleton для хранения имени юзера
 
+# views.py
+
+
 class MyTokenObtainPairView(TokenObtainPairView):
+    # Указываем Django использовать ваш кастомный сериализатор с проверкой last_login
+    serializer_class = MyTokenObtainPairSerializer
+
     def post(self, request, *args, **kwargs):
-        # 1. Получаем стандартный ответ (токены)
+        # Теперь super().post() вернет данные, включая 'needsPasswordChange'
         response = super().post(request, *args, **kwargs)
         
         if response.status_code == 200:
-            # 2. Берем имя из запроса (который прислал Vue)
-            user_name = request.data.get('username', 'admin')
+            user_name = response.data.get('username')
             
-            # 3. Фиксируем для MongoDB (Singleton)
+            # Логика для MongoDB (Singleton)
             from .session_context import identity
             identity.set_user(user_name)
-            print(f"🔐 [SINGLETON] Личность зафиксирована: {user_name}")
-
-            # 4. ВАЖНО: Отдаем имя обратно во Vue, чтобы не было undefined!
-            response.data['username'] = user_name
+            print(f"🔐 [SINGLETON] Identity locked: {user_name}")
             
         return response
 
@@ -163,6 +166,30 @@ class UserAdminView(APIView):
             "username": username,
             "temporaryPassword": temp_pass
         })
+    
+    # Добавьте этот метод ВНУТРЬ класса UserAdminView
+    def delete(self, request, pk=None):
+        """УДАЛЕНИЕ пользователя по ID"""
+        try:
+            # Находим пользователя по ID из URL
+            user_to_delete = User.objects.get(pk=pk)
+            
+            # ЗАЩИТА: Админ не может удалить сам себя
+            if user_to_delete == request.user:
+                return Response(
+                    {"error": "Вы не можете удалить свой собственный аккаунт"}, 
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            user_to_delete.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+            
+        except User.DoesNotExist:
+            return Response(
+                {"error": "Пользователь не найден"}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
+
 
 
 # =============================================================================

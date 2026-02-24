@@ -129,11 +129,12 @@ ALLOWED_HOSTS = [
 ]
 
 # 2. ВКЛЮЧАЕМ ЗАЩИТУ CORS (разрешаем только твой Vue)
-CORS_ALLOW_ALL_ORIGINS = True # Временно разрешаем все, потом сузим до конкретного адреса Vue
+CORS_ALLOW_ALL_ORIGINS = False # Временно разрешаем все, потом сузим до конкретного адреса Vue
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",          # Твой локальный Vue (Vite)
     "http://127.0.0.1:5173",
+    "http://localhost:4200",
     "https://vue-api-stock.vercel.app", # Сюда добавишь адрес после деплоя Vue
 ]
 

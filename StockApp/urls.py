@@ -51,4 +51,6 @@ urlpatterns = [
     path('auth/update-password', UpdatePasswordView.as_view(), name='update_password'),
 
     path('dashboard/stats/', DashboardStatsView.as_view(), name='dashboard_stats'),
+
+    path('auth/admin/delete-user/<int:pk>/', UserAdminView.as_view(), name='delete_user'),
 ]
