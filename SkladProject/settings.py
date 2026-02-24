@@ -128,14 +128,15 @@ ALLOWED_HOSTS = [
     '127.0.0.1'
 ]
 
-# 2. ВКЛЮЧАЕМ ЗАЩИТУ CORS (разрешаем только твой Vue)
-CORS_ALLOW_ALL_ORIGINS = False # Временно разрешаем все, потом сузим до конкретного адреса Vue
+# 2. ВКЛЮЧАЕМ ЗАЩИТУ CORS (Cross-Origin Resource Sharing)
+CORS_ALLOW_ALL_ORIGINS = False # блокируем все, кроме разрешенных
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",          # Твой локальный Vue (Vite)
+    "http://localhost:5173",          # локальный Vue (Vite)
     "http://127.0.0.1:5173",
     "http://localhost:4200",
-    "https://vue-api-stock.vercel.app", # Сюда добавишь адрес после деплоя Vue
+    "https://vue-api-stock.vercel.app", # добавить адрес после деплоя Vue
+    "https://angular-api-sklad.vercel.app", # если будет Angular
 ]
 
 # 3. ДОВЕРЕННЫЕ ИСТОЧНИКИ ДЛЯ CSRF
