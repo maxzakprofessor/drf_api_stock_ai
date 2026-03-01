@@ -261,14 +261,14 @@ class GoodRestView(APIView):
         for r in m_to: balances[(r['s'], r['g'])] = balances.get((r['s'], r['g']), 0) + r['t']
 
         results = [{"nameStock": k[0], "nameGood": k[1], "qty": v} for k, v in balances.items()]
-        if wnameStock != "Все": results = [r for r in results if r['nameStock'] == wnameStock]
-        if wnameGood != "Все": results = [r for r in results if r['nameGood'] == wnameGood]
+        if wnameStock != "All": results = [r for r in results if r['nameStock'] == wnameStock]
+        if wnameGood != "All": results = [r for r in results if r['nameGood'] == wnameGood]
         return sorted(results, key=lambda x: (x['nameStock'], x['nameGood']))
 
-    def get(self, request, wnameStock="Все", wnameGood="Все"):
+    def get(self, request, wnameStock="All", wnameGood="All"):
         return Response(self.get_balances(wnameStock, wnameGood))
 
-    def post(self, request, wnameStock="Все", wnameGood="Все"):
+    def post(self, request, wnameStock="All", wnameGood="All"):
         """Генерация PDF без 'квадратиков' (с русским шрифтом)"""
         data = self.get_balances(wnameStock, wnameGood)
         buffer = io.BytesIO()
@@ -321,7 +321,7 @@ class DashboardStatsView(APIView):
         from django.db.models import Sum
         
         # Считаем остатки по всем складам суммарно
-        raw_data = GoodRestView().get_balances("Все", "Все")
+        raw_data = GoodRestView().get_balances("All", "All")
         # Группируем по товару для графика
         chart_labels = []
         chart_values = []
