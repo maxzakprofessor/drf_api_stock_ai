@@ -1,0 +1,28 @@
+# --- Python (Bytecode & Cache) ---
+__pycache__/
+*.py[cod]
+*$py.class
+
+# --- Virtual Environments (Критично!) ---
+venv/
+env/
+.venv/
+ENV/
+
+# --- Database (Local data) ---
+*.sqlite3
+
+# --- Environment Variables (Security) ---
+.env
+.python-version
+
+# --- Django (Static & Media) ---
+static/
+media/
+staticfiles/
+
+# --- VS Code & IDE ---
+.vscode/
+.idea/
+*.swp
+*.bak

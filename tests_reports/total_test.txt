@@ -1,0 +1,26 @@
+# Генерируем уникальное имя для отчета Шага 1
+REPORT_1="tests_reports/step_1_models_$(date +%Y%m%d_%H%M).html"
+
+# Запуск: -v (подробно), -s (вывод логов), --log-cli-level=INFO (показ имен в отчете)
+pytest StockApp/tests/test_step_1_core.py -v -s --html="$REPORT_1" --self-contained-html --log-cli-level=INFO
+
+# Генерируем уникальное имя для отчета Шага 2
+REPORT_2="tests_reports/step_2_audit_$(date +%Y%m%d_%H%M).html"
+
+# Запуск аналогичен, но для файла с сигналами
+pytest StockApp/tests/test_step_2_audit.py -v -s --html="$REPORT_2" --self-contained-html --log-cli-level=INFO
+
+ Запускаем Шаг 3 отдельно
+REPORT_3="tests_reports/step_3_api_$(date +%Y%m%d_%H%M).html"
+pytest StockApp/tests/test_step_3_api.py -v -s --html="$REPORT_3" --self-contained-html --log-cli-level=INFO
+
+# Запускаем Шаг 4 отдельно
+REPORT_4="tests_reports/step_4_analytics_$(date +%Y%m%d_%H%M).html"
+pytest StockApp/tests/test_step_4_analytics.py -v -s --html="$REPORT_4" --self-contained-html --log-cli-level=INFO
+
+ИТОГ ПО БЭКЕНДУ (DRF) 🏁
+Поздравляю! Ты прошел через 4 фундаментальных этапа тестирования:
+Ядро (SQL): Модели и связи.
+События (NoSQL): Сигналы и Аудит с Mocking.
+Безопасность (Security): JWT и Permissions.
+Бизнес-логика (Business Logic): Расчеты и Отчеты.
