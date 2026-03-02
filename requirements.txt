@@ -24,3 +24,7 @@ pytest-metadata==3.1.1
 reportlab==4.4.10
 sqlparse==0.5.5
 tzdata==2025.3
+# --- КРИТИЧНО ДЛЯ RENDER ---
+gunicorn
+python-dotenv
+psycopg2-binary
