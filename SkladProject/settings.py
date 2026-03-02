@@ -97,7 +97,9 @@ SIMPLE_JWT = {
 ALLOWED_HOSTS = [
     'mzakiryanovgmailcom.pythonanywhere.com', 
     'localhost', 
-    '127.0.0.1'
+    '127.0.0.1',
+    'drf-api-stock-ai.onrender.com',
+    '.onrender.com',
 ]
 
 CORS_ALLOWED_ORIGINS = [
