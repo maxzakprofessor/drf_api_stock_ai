@@ -136,3 +136,8 @@ DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
 # --- МОНГО (АУДИТ) ---
 MONGO_URI = os.getenv('MONGO_URI', "mongodb://localhost:27017/")
 MONGO_DB_NAME = "sklad_audit_db"
+
+# --- ФИКС CORS ДЛЯ VERCEL ---
+APPEND_SLASH = False # 🚫 Отключаем редиректы, которые убивают CORS-заголовки
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_METHODS = ["DELETE", "GET", "OPTIONS", "PATCH", "POST", "PUT"]
