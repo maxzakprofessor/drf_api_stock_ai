@@ -2,7 +2,6 @@ from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import Goods, Stocks, Goodincomes, Goodmoves, Goodsales
 
-# 1. СЕРИАЛИЗАТОР ДЛЯ JWT (ВХОД)
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         data = super().validate(attrs)
@@ -12,12 +11,15 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
             data['tenantId'] = self.user.profile.tenant.id
         return data
 
-# 2. ТОВАРЫ И СКЛАДЫ
 class GoodSerializer(serializers.ModelSerializer):
     class Meta:
         model = Goods
         fields = ['id', 'nameGood', 'tenant']
-        extra_kwargs = {'tenant': {'required': False, 'allow_null': True}}
+        # 🔥 Убираем валидаторы с nameGood, чтобы Django не сканировал базу зря
+        extra_kwargs = {
+            'tenant': {'read_only': True},
+            'nameGood': {'validators': []} 
+        }
 
 class StockSerializer(serializers.ModelSerializer):
     class Meta:
@@ -25,7 +27,6 @@ class StockSerializer(serializers.ModelSerializer):
         fields = ['id', 'nameStock', 'tenant']
         extra_kwargs = {'tenant': {'read_only': True}}
 
-# 3. ОПЕРАЦИИ
 class GoodcomineSerializer(serializers.ModelSerializer):
     nameStock = serializers.ReadOnlyField(source='stock.nameStock')
     nameGood = serializers.ReadOnlyField(source='good.nameGood')
