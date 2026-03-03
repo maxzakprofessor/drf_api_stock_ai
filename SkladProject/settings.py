@@ -71,8 +71,15 @@ TIME_ZONE = 'Asia/Almaty'
 USE_I18N = True
 USE_TZ = True
 
-STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# --- СТАТИЧЕСКИЕ ФАЙЛЫ ---
+STATIC_URL = 'static/'
+# 🔥 ДОБАВЬ ЭТУ СТРОКУ НИЖЕ
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') 
+
+# Также проверь, что у тебя импортирован os в начале файла
+
 
 # --- JWT (АВТОРИЗАЦИЯ) ---
 REST_FRAMEWORK = {
