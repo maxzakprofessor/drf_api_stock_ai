@@ -27,7 +27,7 @@ class Goods(models.Model):
     nameGood = models.CharField(max_length=500)
 
     def __str__(self): 
-        return self.nameGood
+        return f"{self.nameGood} | {self.tenant.name}"
 
 # 2. Справочник СКЛАДОВ
 # Склад жестко привязан к компании
