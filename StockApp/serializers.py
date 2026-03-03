@@ -27,6 +27,7 @@ class TenantRestrictedSerializer(serializers.ModelSerializer):
 class GoodSerializer(TenantRestrictedSerializer):
     class Meta(TenantRestrictedSerializer.Meta):
         model = Goods
+        extra_kwargs = {'tenant': {'read_only': True}}
         fields = ['id', 'nameGood', 'tenant']
 
 class StockSerializer(TenantRestrictedSerializer):
@@ -58,5 +59,6 @@ class GoodsaleSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Goodsales
+        extra_kwargs = {'tenant': {'read_only': True}}
         fields = ['id', 'stock', 'good', 'nameStock', 'nameGood', 'qty', 'price', 'datetime']
 

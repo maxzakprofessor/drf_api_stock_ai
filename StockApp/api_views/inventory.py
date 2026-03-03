@@ -1,31 +1,24 @@
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
-
 from ..models import Goods, Stocks, Goodincomes, Goodmoves
-from ..serializers import (
-    GoodSerializer, StockSerializer, 
-    GoodcomineSerializer, GoodmoveSerializer
-)
+from ..serializers import GoodSerializer, StockSerializer, GoodcomineSerializer, GoodmoveSerializer
 
 class MultiTenantViewSet(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
-
     def get_tenant(self):
-        if hasattr(self.request.user, 'profile'):
-            return self.request.user.profile.tenant
-        return None
+        return self.request.user.profile.tenant if hasattr(self.request.user, 'profile') else None
 
 class GoodViewSet(MultiTenantViewSet):
     serializer_class = GoodSerializer
     def get_queryset(self):
         tenant = self.get_tenant()
-        # Оптимизация select_related для скорости
+        # Оптимизация select_related (забираем всё одним запросом)
         return Goods.objects.filter(tenant=tenant).select_related('tenant') if tenant else Goods.objects.none()
     
     def perform_create(self, serializer):
-        # 🔥 Прямая привязка убирает задержку 30 секунд
+        # Принудительная привязка БЕЗ валидации в базе
         serializer.save(tenant=self.get_tenant())
 
 class StockViewSet(MultiTenantViewSet):
@@ -37,21 +30,4 @@ class StockViewSet(MultiTenantViewSet):
     def perform_create(self, serializer):
         serializer.save(tenant=self.get_tenant())
 
-class GoodIncomeViewSet(MultiTenantViewSet):
-    serializer_class = GoodcomineSerializer
-    def get_queryset(self):
-        tenant = self.get_tenant()
-        return Goodincomes.objects.filter(stock__tenant=tenant).select_related('stock', 'good') if tenant else Goodincomes.objects.none()
-    
-    def perform_create(self, serializer):
-        # Приходы фильтруются через связь со складом
-        serializer.save()
-
-class GoodMoveViewSet(MultiTenantViewSet):
-    serializer_class = GoodmoveSerializer
-    def get_queryset(self):
-        tenant = self.get_tenant()
-        return Goodmoves.objects.filter(stockFrom__tenant=tenant).select_related('stockFrom', 'stockTo', 'good') if tenant else Goodmoves.objects.none()
-    
-    def perform_create(self, serializer):
-        serializer.save()
+# ... (остальные классы GoodIncome и GoodMove оставь как были)
