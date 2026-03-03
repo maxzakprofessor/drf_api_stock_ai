@@ -1,9 +1,11 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenRefreshView
-from .views import (
+
+# 🔥 ИСПРАВЛЕННЫЙ ИМПОРТ: берем из пакета api_views
+from .api_views import (
     GoodViewSet, StockViewSet, GoodIncomeViewSet, GoodMoveViewSet, 
-    GoodSaleViewSet, # <--- НОВЫЙ ИМПОРТ
+    GoodSaleViewSet, 
     GoodRestView, MyTokenObtainPairView, AIAnalyzeView,
     UserAdminView, UpdatePasswordView, DashboardStatsView,
     RegisterRequestView, RegisterConfirmView
@@ -15,7 +17,6 @@ router.register(r'goods', GoodViewSet, basename='goods')
 router.register(r'stocks', StockViewSet, basename='stocks')
 router.register(r'goodincomes', GoodIncomeViewSet, basename='goodincomes')
 router.register(r'goodmoves', GoodMoveViewSet, basename='goodmoves')
-# РЕГИСТРИРУЕМ ПРОДАЖИ (Расход)
 router.register(r'goodsales', GoodSaleViewSet, basename='goodsales')
 
 # 2. СПИСОК МАРШРУТОВ (URLS)
