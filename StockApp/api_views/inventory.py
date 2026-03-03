@@ -14,11 +14,10 @@ class GoodViewSet(MultiTenantViewSet):
     serializer_class = GoodSerializer
     def get_queryset(self):
         tenant = self.get_tenant()
-        # Оптимизация select_related (забираем всё одним запросом)
         return Goods.objects.filter(tenant=tenant).select_related('tenant') if tenant else Goods.objects.none()
     
     def perform_create(self, serializer):
-        # Принудительная привязка БЕЗ валидации в базе
+        # ОПТИМИЗАЦИЯ: Прямая привязка без лишних SQL-проверок
         serializer.save(tenant=self.get_tenant())
 
 class StockViewSet(MultiTenantViewSet):
@@ -30,4 +29,18 @@ class StockViewSet(MultiTenantViewSet):
     def perform_create(self, serializer):
         serializer.save(tenant=self.get_tenant())
 
-# ... (остальные классы GoodIncome и GoodMove оставь как были)
+class GoodIncomeViewSet(MultiTenantViewSet):
+    serializer_class = GoodcomineSerializer
+    def get_queryset(self):
+        tenant = self.get_tenant()
+        return Goodincomes.objects.filter(stock__tenant=tenant).select_related('stock', 'good') if tenant else Goodincomes.objects.none()
+    def perform_create(self, serializer):
+        serializer.save()
+
+class GoodMoveViewSet(MultiTenantViewSet):
+    serializer_class = GoodmoveSerializer
+    def get_queryset(self):
+        tenant = self.get_tenant()
+        return Goodmoves.objects.filter(stockFrom__tenant=tenant).select_related('stockFrom', 'stockTo', 'good') if tenant else Goodmoves.objects.none()
+    def perform_create(self, serializer):
+        serializer.save()
