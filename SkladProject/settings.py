@@ -105,9 +105,12 @@ ALLOWED_HOSTS = [
     'mzakiryanovgmailcom.pythonanywhere.com', 
     'localhost', 
     '127.0.0.1',
-    'drf-api-stock-ai.onrender.com',
     '.onrender.com',
+    '.koyeb.app',  # 🔥 ДОБАВИЛИ ЭТУ СТРОКУ
+    '*',           # 🔑 МОЖНО ДОБАВИТЬ ЗВЕЗДОЧКУ ДЛЯ 100% ГАРАНТИИ
 ]
+
+
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",          
@@ -120,6 +123,7 @@ CORS_ALLOWED_ORIGINS = [
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
     "https://angular-api-sklad.vercel.app",
+
 ]
 
 CORS_ALLOW_HEADERS = [
