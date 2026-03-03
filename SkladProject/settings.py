@@ -2,18 +2,16 @@ import os
 from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
-import dj_database_url  # 🔥 ДОБАВЬ ЭТУ СТРОКУ
+import dj_database_url
 
-
-# 1. ЗАГРУЗКА СЕКРЕТОВ (Открываем сейф 🔐)
+# 1. ЗАГРУЗКА СЕКРЕТОВ
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(os.path.join(BASE_DIR, '.env'))
 
-# ЧИТАЕМ ПЕРЕМЕННЫЕ ИЗ .ENV
-SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-default-key')
 DEBUG = os.getenv('DEBUG') == 'True'
 
-# --- СПИСОК ПРИЛОЖЕНИЙ ---
+# 2. ПРИЛОЖЕНИЯ
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -21,17 +19,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
-    # СТОРОННИЕ БИБЛИОТЕКИ
     'rest_framework',      
     'corsheaders',         
     'StockApp',            
 ]
 
-# --- ПРОМЕЖУТОЧНОЕ ПО (MIDDLEWARE) ---
+# 3. MIDDLEWARE (Добавлен WhiteNoise для статики)
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware', 
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -59,54 +56,38 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'SkladProject.wsgi.application'
 
-# --- БАЗА ДАННЫХ ---
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.sqlite3',
-#        'NAME': BASE_DIR / 'db.sqlite3',
-#    }
-#}
-
-
-# Пытаемся взять URL базы из переменной окружения (для Koyeb)
+# 4. БАЗА ДАННЫХ (Neon в облаке / Postgres локально)
 DATABASE_URL = os.getenv('DATABASE_URL')
 
 if DATABASE_URL:
-    # --- ОБЛАКО (Neon.tech) ---
     DATABASES = {
         'default': dj_database_url.config(default=DATABASE_URL, conn_max_age=600)
     }
 else:
-    # --- ЛОКАЛЬНО (Твой Postgres) ---
     DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'sklad_db',      # Убедись, что создал её: CREATE DATABASE sklad_db;
-        'USER': 'postgres',
-        'PASSWORD': 'Sc0da3!',   # Твой новый сброшенный пароль 🦾
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
-    }
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'sklad_db',
+            'USER': 'postgres',
+            'PASSWORD': 'Sc0da3!',
+            'HOST': '127.0.0.1',
+            'PORT': '5432',
+        }
     }
 
-
-# --- ИНТЕРНАЦИОНАЛИЗАЦИЯ ---
+# 5. ИНТЕРНАЦИОНАЛИЗАЦИЯ
 LANGUAGE_CODE = 'ru-ru'
 TIME_ZONE = 'Asia/Almaty'
 USE_I18N = True
 USE_TZ = True
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# --- СТАТИЧЕСКИЕ ФАЙЛЫ ---
+# 6. СТАТИКА
 STATIC_URL = 'static/'
-# 🔥 ДОБАВЬ ЭТУ СТРОКУ НИЖЕ
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') 
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Также проверь, что у тебя импортирован os в начале файла
-
-
-# --- JWT (АВТОРИЗАЦИЯ) ---
+# 7. JWT & REST FRAMEWORK
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -119,61 +100,32 @@ REST_FRAMEWORK = {
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
-    'ROTATE_REFRESH_TOKENS': False,
-    'ALGORITHM': 'HS256',
     'SIGNING_KEY': SECRET_KEY,
     'AUTH_HEADER_TYPES': ('Bearer', 'Token'), 
 }
 
-# --- СЕТЕВЫЕ НАСТРОЙКИ (CORS & HOSTS) ---
-ALLOWED_HOSTS = [
-    'mzakiryanovgmailcom.pythonanywhere.com', 
-    'localhost', 
-    '127.0.0.1',
-    '.onrender.com',
-    '.koyeb.app',  # 🔥 ДОБАВИЛИ ЭТУ СТРОКУ
-    '*',           # 🔑 МОЖНО ДОБАВИТЬ ЗВЕЗДОЧКУ ДЛЯ 100% ГАРАНТИИ
-]
-
-
+# 8. БЕЗОПАСНОСТЬ (Исправлено для Koyeb)
+ALLOWED_HOSTS = ['*']
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",          
-    "http://127.0.0.1:5173",
     "http://localhost:4200",
-    "https://vue-api-stock.vercel.app", 
     "https://angular-api-sklad.vercel.app", 
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:5173",
+    "http://localhost:4200",
     "https://angular-api-sklad.vercel.app",
-
+    "https://*.koyeb.app",
 ]
 
-CORS_ALLOW_HEADERS = [
-    "accept",
-    "authorization", 
-    "content-type",
-    "user-agent",
-    "x-csrftoken",
-    "x-requested-with",
-]
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_METHODS = ["DELETE", "GET", "OPTIONS", "PATCH", "POST", "PUT"]
 
-# --- ПОЧТОВЫЙ СЕРВЕР (Скрыт в .env 🛡️) ---
+# 9. ПОЧТА (Gmail SMTP)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
-DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
-
-# --- МОНГО (АУДИТ) ---
-MONGO_URI = os.getenv('MONGO_URI', "mongodb://localhost:27017/")
-MONGO_DB_NAME = "sklad_audit_db"
-
-# --- ФИКС CORS ДЛЯ VERCEL ---
-APPEND_SLASH = False # 🚫 Отключаем редиректы, которые убивают CORS-заголовки
-CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_METHODS = ["DELETE", "GET", "OPTIONS", "PATCH", "POST", "PUT"]
+DEFAULT_FROM_EMAIL = os.getenv('EMAIL_HOST_USER')
