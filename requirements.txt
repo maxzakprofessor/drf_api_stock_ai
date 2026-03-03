@@ -1,6 +1,7 @@
 asgiref==3.11.1
 charset-normalizer==3.4.4
 colorama==0.4.6
+dj-database-url==3.1.2
 Django==6.0.2
 django-cors-headers==4.9.0
 djangorestframework==3.16.1
@@ -14,6 +15,8 @@ MarkupSafe==3.0.3
 packaging==26.0
 pillow==12.1.1
 pluggy==1.6.0
+psycopg==3.3.3
+psycopg2-binary==2.9.11
 Pygments==2.19.2
 PyJWT==2.11.0
 pymongo==4.16.0
@@ -21,10 +24,8 @@ pytest==9.0.2
 pytest-django==4.12.0
 pytest-html==4.2.0
 pytest-metadata==3.1.1
+python-dotenv==1.2.2
 reportlab==4.4.10
 sqlparse==0.5.5
+typing_extensions==4.15.0
 tzdata==2025.3
-# --- КРИТИЧНО ДЛЯ RENDER ---
-gunicorn
-python-dotenv
-psycopg2-binary

@@ -2,6 +2,8 @@ import os
 from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
+import dj_database_url  # 🔥 ДОБАВЬ ЭТУ СТРОКУ
+
 
 # 1. ЗАГРУЗКА СЕКРЕТОВ (Открываем сейф 🔐)
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -58,12 +60,35 @@ TEMPLATES = [
 WSGI_APPLICATION = 'SkladProject.wsgi.application'
 
 # --- БАЗА ДАННЫХ ---
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.sqlite3',
+#        'NAME': BASE_DIR / 'db.sqlite3',
+#    }
+#}
+
+
+# Пытаемся взять URL базы из переменной окружения (для Koyeb)
+DATABASE_URL = os.getenv('DATABASE_URL')
+
+if DATABASE_URL:
+    # --- ОБЛАКО (Neon.tech) ---
+    DATABASES = {
+        'default': dj_database_url.config(default=DATABASE_URL, conn_max_age=600)
     }
-}
+else:
+    # --- ЛОКАЛЬНО (Твой Postgres) ---
+    DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'sklad_db',      # Убедись, что создал её: CREATE DATABASE sklad_db;
+        'USER': 'postgres',
+        'PASSWORD': 'Sc0da3!',   # Твой новый сброшенный пароль 🦾
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
+    }
+    }
+
 
 # --- ИНТЕРНАЦИОНАЛИЗАЦИЯ ---
 LANGUAGE_CODE = 'ru-ru'
