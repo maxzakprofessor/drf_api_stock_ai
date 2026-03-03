@@ -14,7 +14,7 @@ class GoodViewSet(MultiTenantViewSet):
     serializer_class = GoodSerializer
     def get_queryset(self):
         tenant = self.get_tenant()
-        return Goods.objects.filter(tenant=tenant).select_related('tenant') if tenant else Goods.objects.none()
+        return Goods.objects.all() if tenant else Goods.objects.none()
     
     def perform_create(self, serializer):
         # ОПТИМИЗАЦИЯ: Прямая привязка без лишних SQL-проверок
