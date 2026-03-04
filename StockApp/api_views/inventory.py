@@ -13,12 +13,12 @@ class MultiTenantViewSet(viewsets.ModelViewSet):
 class GoodViewSet(MultiTenantViewSet):
     serializer_class = GoodSerializer
     def get_queryset(self):
-        tenant = self.get_tenant()
-        # 🔥 ВОЗВРАЩАЕМ ФИЛЬТР: Только товары моей компании
-        return Goods.objects.filter(tenant=tenant).select_related('tenant') if tenant else Goods.objects.none()
+        # Оставляем "сквозной" просмотр (видят все)
+        return Goods.objects.all().select_related('tenant')
     
     def perform_create(self, serializer):
-        # Оставляем этот метод для СКОРОСТИ (убирает 30 секунд задержки)
+        # 🔥 ФИКС ОШИБКИ 500: Принудительно назначаем компанию создателя
+        # Теперь база Neon не будет ругаться на пустое поле tenant_id
         serializer.save(tenant=self.get_tenant())
 
 class StockViewSet(MultiTenantViewSet):
@@ -26,7 +26,6 @@ class StockViewSet(MultiTenantViewSet):
     def get_queryset(self):
         tenant = self.get_tenant()
         return Stocks.objects.filter(tenant=tenant).select_related('tenant') if tenant else Stocks.objects.none()
-    
     def perform_create(self, serializer):
         serializer.save(tenant=self.get_tenant())
 
