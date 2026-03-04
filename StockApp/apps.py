@@ -1,22 +1,21 @@
-# Импортируем базовый класс для конфигурации приложений Django
 from django.apps import AppConfig
+from django.conf import settings
 
-# Основной класс настроек для вашего приложения склада
 class StockappConfig(AppConfig):
-    # Указываем тип поля для автоматически создаваемых ID (первичных ключей) в моделях.
-    # BigAutoField создает 64-битные числа, что стандарт для современных версий Django.
     default_auto_field = 'django.db.models.BigAutoField'
-    
-    # Системное имя приложения. Должно точно совпадать с названием папки.
-    # Это имя мы указывали в INSTALLED_APPS в файле settings.py.
     name = 'StockApp'
-    
-    # Понятное название для админ-панели (опционально)
     verbose_name = 'Учёт склада и товаров'
 
- 
-    # --- ДОБАВЛЯЕМ ЭТО ---
     def ready(self):
-        # Импортируем файл сигналов при запуске сервера
-        import StockApp.signals 
-
+        # 🔥 УМНЫЙ РУБИЛЬНИК:
+        # Если DEBUG=True (локально), подключаем сигналы и Mongo.
+        # Если DEBUG=False (на Koyeb), пропускаем, чтобы не было тормозов 30с.
+        if settings.DEBUG:
+            try:
+                import StockApp.signals
+                print("🛠️ [DEBUG] Сигналы и MongoDB подключены локально.")
+            except ImportError:
+                print("⚠️ [DEBUG] Ошибка импорта сигналов.")
+        else:
+            # В облаке (Koyeb) эта часть кода даже не запустится! 🏎️💨
+            print("🚀 [PROD] Сигналы (Mongo/Email) отключены для скорости API.")
