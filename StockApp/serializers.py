@@ -5,7 +5,13 @@ from .models import Goods, Stocks, Goodincomes, Goodmoves, Goodsales
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         data = super().validate(attrs)
+        # ОСНОВНЫЕ ДАННЫЕ
         data['username'] = self.user.username
+        
+        # 🔥 ВОТ ЭТО ВКЛЮЧАЕТ MANDATORY CHANGE В АНГЛУЛЯРЕ:
+        # Если last_login пустой (None), флаг будет True
+        data['needsPasswordChange'] = self.user.last_login is None
+        
         if hasattr(self.user, 'profile'):
             data['tenantName'] = self.user.profile.tenant.name
             data['tenantId'] = self.user.profile.tenant.id
@@ -15,7 +21,6 @@ class GoodSerializer(serializers.ModelSerializer):
     class Meta:
         model = Goods
         fields = ['id', 'nameGood', 'tenant']
-        # 🔥 Убираем валидаторы с nameGood, чтобы Django не сканировал базу зря
         extra_kwargs = {
             'tenant': {'read_only': True},
             'nameGood': {'validators': []} 
